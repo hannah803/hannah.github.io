@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hannahliu.framer.website/sitemap.xml
