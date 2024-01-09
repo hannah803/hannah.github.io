@@ -30,7 +30,7 @@ twitter_username: hannah803
 github_username: hannah803
 
 # Build settings
-theme: minima
+theme: jekyll-theme-yat
 plugins:
   - jekyll-feed
 # Exclude from processing.
