@@ -29,7 +29,7 @@ github_username: hannah803
 favicon: https://framerusercontent.com/images/T7nNidOPjze2bv1yQrbsp6pBhs.jpg
 
 # Build settings
-theme: jekyll-theme-yat
+theme: jekyll-theme-minima
 plugins:
   - jekyll-feed
 # Exclude from processing.
