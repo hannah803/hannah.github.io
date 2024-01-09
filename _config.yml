@@ -18,7 +18,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: hanna's
+title: hannah's
 email: hui.liu803@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Welcome to Hannah's personal homepage.
@@ -29,7 +29,7 @@ github_username: hannah803
 favicon: https://framerusercontent.com/images/T7nNidOPjze2bv1yQrbsp6pBhs.jpg
 
 # Build settings
-remote_theme: jeffreytse/jekyll-theme-yat
+remote_theme: "jeffreytse/jekyll-theme-yat"
 plugins:
   - jekyll-feed
 # Exclude from processing.
