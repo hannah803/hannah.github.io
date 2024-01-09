@@ -32,7 +32,7 @@ favicon: https://framerusercontent.com/images/T7nNidOPjze2bv1yQrbsp6pBhs.jpg
 <<<<<<< Updated upstream
 theme: jekyll-theme-minima
 =======
-remote_theme: jekyll-theme-yat
+remote_theme: jeffreytse/jekyll-theme-yat
 >>>>>>> Stashed changes
 plugins:
   - jekyll-feed
