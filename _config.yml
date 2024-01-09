@@ -29,7 +29,11 @@ github_username: hannah803
 favicon: https://framerusercontent.com/images/T7nNidOPjze2bv1yQrbsp6pBhs.jpg
 
 # Build settings
+<<<<<<< Updated upstream
 theme: jekyll-theme-minima
+=======
+remote_theme: jekyll-theme-yat
+>>>>>>> Stashed changes
 plugins:
   - jekyll-feed
 # Exclude from processing.
