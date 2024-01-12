@@ -18,7 +18,8 @@ sidebar: []
 
 ![](https://framerusercontent.com/images/1VybY2Hgv7V08rQ99WjCRemdk4.png)
 
-## Lec 1 - 书生·浦语大模型全链路开源体系 
+## Lec 1 - 书生·浦语大模型全链路开源体系
+-----------------------------------
 by 上海人工智能实验室 陈恺
 
 ### 大模型是发展通用人工智能的一个重要途径
