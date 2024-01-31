@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator><link href="https://hannah803.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://hannah803.github.io/blog/" rel="alternate" type="text/html" /><updated>2024-01-31T09:13:50+00:00</updated><id>https://hannah803.github.io/blog/feed.xml</id><title type="html">Hannah’s</title><subtitle>Ideas, knowledge, and all the things worth remembering.</subtitle><entry><title type="html">InternLM Training - Lec3</title><link href="https://hannah803.github.io/blog/blog/interlm/2024/01/10/InternLM-Training-Lec3.html" rel="alternate" type="text/html" title="InternLM Training - Lec3" /><published>2024-01-10T00:00:00+00:00</published><updated>2024-01-10T00:00:00+00:00</updated><id>https://hannah803.github.io/blog/blog/interlm/2024/01/10/InternLM-Training-Lec3</id><content type="html" xml:base="https://hannah803.github.io/blog/blog/interlm/2024/01/10/InternLM-Training-Lec3.html">&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/ZMXHfyFcTURicVBX66x8mRea8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;lec-3---基于-internlm-和-langchain-搭建你的知识库&quot;&gt;Lec 3 - 基于 InternLM 和 LangChain 搭建你的知识库&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;prompt-engineering-for-developers 开源项目负责人 邹丽衡&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/InternLM/tutorial/blob/main/langchain/readme.md&quot;&gt;文档&lt;/a&gt; &lt;a href=&quot;https://www.bilibili.com/video/BV1sT4y1p71V/&quot;&gt;视频&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;rag&quot;&gt;RAG&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/bB4duYqCMovpSvQEOEU41FhqKqA.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;https://framerusercontent.com/images/tU2yWsDKETYCGJw6v9Ha8d0v24.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;https://framerusercontent.com/images/epr0X0lxH9JzggVvMNnUIBcWo.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;langchain&quot;&gt;LangChain&lt;/h3&gt;
+
+&lt;p&gt;LangChain 框架是一个开源工具，通过为各种 LLM 提供通用接口来简化应用程序的开发流程，帮助开发者自由构建 LLM应用。&lt;/p&gt;
+
+&lt;p&gt;LangChain 的核心组成模块：&lt;/p&gt;
+
+&lt;p&gt;链（Chains）：将组件组合实现端到端应用，通过一个对象封装实现一系列LLM操作&lt;/p&gt;
+
+&lt;p&gt;• Eg.检索问答链，覆盖实现了 RAG（检索增强生成）的全部流程&lt;/p&gt;
+
+&lt;p&gt;LangChain 提供了检索问答链模版，可以自动实现知识检索、Prompt 嵌入、LLM问答的全部流程&lt;/p&gt;
+
+&lt;p&gt;将基于 InternLM 的自定义 LLM 和已构建的向量数据库接入到检索问答链的上游&lt;/p&gt;
+
+&lt;p&gt;调用检索问答链，即可实现知识库助手的核心功能&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/Ckcd6lDLGgJ6UwavYAX1q247Y.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;实验环境&quot;&gt;实验环境：&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://studio.intern-ai.org.cn/&quot;&gt;InternStudio&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;info: Ubuntu 20.04, CUDA 11.7, CuDNN8.5-NCCL2.12, conda&lt;/p&gt;
+
+&lt;p&gt;resource: A100(1/4)&lt;/p&gt;
+
+&lt;h3 id=&quot;知识库搭建&quot;&gt;知识库搭建&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;h4 id=&quot;数据收集&quot;&gt;数据收集&lt;/h4&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;opencompass、lmdeploy、xtuner、InternLM-XComposer、lagent、InternLM仓库中所有的 markdown、txt 文件作为示例语料库&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;h4 id=&quot;加载数据&quot;&gt;加载数据&lt;/h4&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;使用 LangChain 提供的 FileLoader 对象来加载文件（语料），得到由文件解析出的纯文本内容，之后引入到 LangChain 框架中构建向量数据库&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;h4 id=&quot;构建向量数据库&quot;&gt;构建向量数据库&lt;/h4&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;第三方库 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nltk（Natural Language Toolkit）&lt;/code&gt;when 使用开源词向量模型构建开源词向量&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;文本分块&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;LangChain 提供了多种&lt;a href=&quot;https://github.com/datawhalechina/prompt-engineering-for-developers/blob/9dbcb48416eb8af9ff9447388838521dc0f9acb0/content/LangChain%20Chat%20with%20Your%20Data/1.%E7%AE%80%E4%BB%8B%20Introduction.md&quot;&gt;文本分块工具&lt;/a&gt;，e.g.字符串递归分割器&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;文本向量化&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;使用开源词向量模型 &lt;a href=&quot;https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2&quot;&gt;Sentence Transformer&lt;/a&gt;&lt;/p&gt;
+
+        &lt;ul&gt;
+          &lt;li&gt;
+            &lt;p&gt;开源词向量模型 &lt;a href=&quot;https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2&quot;&gt;Sentence Transformer&lt;/a&gt;，相对轻量、支持中文且效果较好&lt;/p&gt;
+          &lt;/li&gt;
+          &lt;li&gt;
+            &lt;p&gt;LangChain 提供了引入 HuggingFace 中的模型并进行向量化的接口&lt;/p&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;Chroma 作为向量数据库&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/045u3gwaxTmf2CzQhIYEcAEGo0.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;interlm接入langchain&quot;&gt;InterLM接入LangChain&lt;/h3&gt;
+
+&lt;p&gt;基于本地部署的 InternLM，继承 LangChain 的 LLM 类自定义一个 InternLM LLM 子类，从而实现将 InternLM 接入到 LangChain 框架中，以完全一致的方式调用 LangChain 的接口&lt;/p&gt;
+
+&lt;p&gt;继承&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LangChain.llms.base.LLM&lt;/code&gt; 并重写构造函数和&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_call&lt;/code&gt;函数&lt;/p&gt;
+
+&lt;h3 id=&quot;构建检索问答链&quot;&gt;构建检索问答链&lt;/h3&gt;
+
+&lt;p&gt;LangChain 通过提供检索问答链对象来实现对于 RAG 全流程的封装。&lt;/p&gt;
+
+&lt;p&gt;调用LangChain 提供的 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RetrievalQA&lt;/code&gt; 对象，在初始化时传入数据库和自定义 LLM 作为参数&lt;/p&gt;
+
+&lt;h3 id=&quot;部署&quot;&gt;部署&lt;/h3&gt;
+
+&lt;p&gt;基于 Gradio 框架部署到 Web 网页&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/BDaY37CADd6RPDiYU1qmucYS7rk.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;作业&quot;&gt;作业&lt;/h3&gt;
+
+&lt;p&gt;【基础】复现课程知识库助手搭建过程 (截图)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/vUcqZcZLPvmMq9E9lCaaLCWCv0.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;https://framerusercontent.com/images/Fs404taFwZYNQPLriyFoz82Dsk.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;https://framerusercontent.com/images/hOgeyiNtnx02h9W3lbvYwIRvfXM.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;【进阶】选择一个垂直领域，收集该领域的专业资料构建专业知识库，并搭建专业问答助手，并在 &lt;a href=&quot;https://openxlab.org.cn/apps&quot;&gt;OpenXLab&lt;/a&gt; 上成功部署（截图，并提供应用地址）&lt;/p&gt;</content><author><name>Hannah</name></author><category term="blog" /><category term="InterLM" /><category term="llm" /><summary type="html"></summary></entry><entry><title type="html">InternLM Training - Lec1</title><link href="https://hannah803.github.io/blog/blog/interlm/2024/01/07/InterLM-Training-Lec1.html" rel="alternate" type="text/html" title="InternLM Training - Lec1" /><published>2024-01-07T00:00:00+00:00</published><updated>2024-01-07T00:00:00+00:00</updated><id>https://hannah803.github.io/blog/blog/interlm/2024/01/07/InterLM-Training-Lec1</id><content type="html" xml:base="https://hannah803.github.io/blog/blog/interlm/2024/01/07/InterLM-Training-Lec1.html">&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/1VybY2Hgv7V08rQ99WjCRemdk4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;lec-1---书生浦语大模型全链路开源体系&quot;&gt;Lec 1 - 书生·浦语大模型全链路开源体系&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;by 上海人工智能实验室 陈恺&lt;/p&gt;
+
+&lt;h3 id=&quot;大模型是发展通用人工智能的一个重要途径&quot;&gt;大模型是发展通用人工智能的一个重要途径&lt;/h3&gt;
+&lt;p&gt;2006年深度学习理论获得突破，一个专用模型解决一个特定问题，后逐渐发展为一个通用大模型应对多种任务、多种模态（语言、视觉等）&lt;/p&gt;
+
+&lt;p&gt;在此背景下，上海人工智能实验室推出书生·浦语大语言模型&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/yNT5qdYoMOPtsjS7J73tI2f8w.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;从模型到应用&quot;&gt;从模型到应用&lt;/h3&gt;
+&lt;p&gt;模型选型、续训/全参数微调/部分参数微调、构建智能体、模型评测、模型部署&lt;/p&gt;
+
+&lt;p&gt;若和环境交互，需要调用外部api或者与业务数据库交互，则要构建基于大模型的智能体agent，在业务场景中有更好表现&lt;/p&gt;
+
+&lt;h4 id=&quot;书生浦语全链条开源开放体系&quot;&gt;书生·浦语全链条开源开放体系&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/Oc2HJuU455yQMxjXopInQzcI8wo.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;数据
+    &lt;ul&gt;
+      &lt;li&gt;书生·万卷，多模态（文本、图像-文本、视频）语料库 2TB&lt;/li&gt;
+      &lt;li&gt;OpenDataLab开放数据平台，5400+数据集&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;预训练 InternLM Train
+    &lt;ul&gt;
+      &lt;li&gt;高可扩展：8卡到千卡&lt;/li&gt;
+      &lt;li&gt;性能优化：Hybrid Zero技术&lt;/li&gt;
+      &lt;li&gt;兼容主流：无缝接入HuggingFace技术生态&lt;/li&gt;
+      &lt;li&gt;开箱即用：修改配置即可训练不同规格的语言模型&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;微调
+    &lt;ul&gt;
+      &lt;li&gt;增量续训，让基座模型学习某垂类领域知识&lt;/li&gt;
+      &lt;li&gt;有监督微调，让模型学会理解和遵循各种指令，训练数据是高质量对话问答数据
+        &lt;ul&gt;
+          &lt;li&gt;全量参数微调，部分参数微调（LoRA、QLoRA算法）&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;XTuner
+        &lt;ul&gt;
+          &lt;li&gt;&lt;img src=&quot;https://framerusercontent.com/images/ikTjpUs50Pdko0V2Ist34mHiM0c.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+          &lt;li&gt;适配多种生态，自动优化加速&lt;/li&gt;
+          &lt;li&gt;适配多种硬件
+            &lt;ul&gt;
+              &lt;li&gt;NVIDIA消费级显卡 2080、3060-3090、4060-4090&lt;/li&gt;
+              &lt;li&gt;NVIDIA数据中心 Tesla T4、V100、A10、A100、H100&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;极致显存优化
+            &lt;ul&gt;
+              &lt;li&gt;8GB显存上微调7B模型&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;评测体系
+    &lt;ul&gt;
+      &lt;li&gt;现有评测体系
+        &lt;ul&gt;
+          &lt;li&gt;&lt;img src=&quot;https://framerusercontent.com/images/eKYqDQIAW1IHADE5aqUydBSGOQ.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;OpenCompass
+        &lt;ul&gt;
+          &lt;li&gt;学科、语言、知识、理解、推理、安全
+            &lt;ul&gt;
+              &lt;li&gt;&lt;img src=&quot;https://framerusercontent.com/images/h8V2zWfOc86GaOHaapGv5gJqQs.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;丰富的模型支持、分布式高效评测、便捷的数据集接口、敏捷的能力迭代
+            &lt;ul&gt;
+              &lt;li&gt;&lt;img src=&quot;https://framerusercontent.com/images/RqwsOO0peso0zPT8E0KwswsLnTA.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;部署
+    &lt;ul&gt;
+      &lt;li&gt;大模型特点：内存开销巨大、动态shape（请求数、token不定）、模型结构相对简单（基于transformer，大部分decoder-only）&lt;/li&gt;
+      &lt;li&gt;带来的挑战：低存储设备上部署、推理时token生成速度与动态shape造成的推理间断、提升吞吐量与平均响应时间性能&lt;/li&gt;
+      &lt;li&gt;解决方案：模型并行、低比特量化、Attention优化、计算和访存优化、Continuous Batching&lt;/li&gt;
+      &lt;li&gt;LMDeploy 提供大模型在GPU上部署的全流程解决方案
+        &lt;ul&gt;
+          &lt;li&gt;模型轻量化（4bit权重量化、8bit k/v量化）、推理（基于turbomind、pytorch推理引擎）、服务（openai server、gradio、trition inference server）&lt;/li&gt;
+          &lt;li&gt;&lt;img src=&quot;https://framerusercontent.com/images/4PQgSMlkg6CRdPCBdYl7pVL2Kpw.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;智能体
+    &lt;ul&gt;
+      &lt;li&gt;&lt;img src=&quot;https://framerusercontent.com/images/PQvEutOdrQV0HbislAhbS1AX3c.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+      &lt;li&gt;Lagent 智能体搭建框架
+        &lt;ul&gt;
+          &lt;li&gt;支持不同类型 ReAct、ReWoo、AutoGPT 执行逻辑Pipeline&lt;/li&gt;
+          &lt;li&gt;支持GPT、InternLM、Hugging Face Transformers、Llama大语言模型&lt;/li&gt;
+          &lt;li&gt;支持不同工具：AI工具、能力拓展（搜索、代码解释器）、Rapid API&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;AgentLego 给大模型提供工具集合
+        &lt;ul&gt;
+          &lt;li&gt;调用工具完成任务
+            &lt;ul&gt;
+              &lt;li&gt;&lt;img src=&quot;https://framerusercontent.com/images/8r1QDBU7D0ckMp2JoX5sAr91qbo.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;支持多个主流智能体系统（&lt;a href=&quot;https://www.langchain.com/&quot;&gt;LangChain&lt;/a&gt;、&lt;a href=&quot;https://huggingface.co/docs/transformers/transformers_agents&quot;&gt;Transformers Agents&lt;/a&gt;、Lagent）、一键式远程工具部署&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Hannah</name></author><category term="blog" /><category term="InterLM" /><category term="llm" /><summary type="html"></summary></entry><entry><title type="html">InternLM Training - Lec2</title><link href="https://hannah803.github.io/blog/blog/interlm/2024/01/07/InterLM-Training-Lec2.html" rel="alternate" type="text/html" title="InternLM Training - Lec2" /><published>2024-01-07T00:00:00+00:00</published><updated>2024-01-07T00:00:00+00:00</updated><id>https://hannah803.github.io/blog/blog/interlm/2024/01/07/InterLM-Training-Lec2</id><content type="html" xml:base="https://hannah803.github.io/blog/blog/interlm/2024/01/07/InterLM-Training-Lec2.html">&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/vS5vELdYgGvUYP81YEMwrxup1cg.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;lec-2---轻松玩转书生浦语大模型趣味demo&quot;&gt;Lec 2 - 轻松玩转书生·浦语大模型趣味Demo&lt;/h2&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;by d2l-ai-solutions-manual 开源项目负责人 宋志学&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/InternLM/tutorial/blob/main/helloworld/hello_world.md&quot;&gt;文档&lt;/a&gt; &lt;a href=&quot;https://www.bilibili.com/video/BV1Ci4y1z72H&quot;&gt;视频&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;大模型&quot;&gt;大模型&lt;/h2&gt;
+
+&lt;p&gt;包含超大规模参数（数十亿、数千亿个参数）的神经网络模型 应用：NLP、计算机视觉、语音识别&lt;/p&gt;
+
+&lt;p&gt;神经网络结构：Transformer、BERT、GPT&lt;/p&gt;
+
+&lt;p&gt;面临挑战：计算资源、训练成本、依赖大规模数据、模型的可解释性&lt;/p&gt;
+
+&lt;p&gt;模型下载from Hugging face、openxlab、modelscope&lt;/p&gt;
+
+&lt;p&gt;浦语·灵笔 视觉-语言大模型&lt;/p&gt;
+
+&lt;p&gt;InternLM-7B，对话模型，支持8k token上下文窗口&lt;/p&gt;
+
+&lt;h2 id=&quot;demo1---internlm-chat-7b--internstudio&quot;&gt;Demo1 - InternLM-Chat-7B + InternStudio&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://studio.intern-ai.org.cn/&quot;&gt;InternStudio&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;info: Ubuntu 20.04, CUDA 11.7, CuDNN8.5-NCCL2.12, conda&lt;/p&gt;
+
+&lt;p&gt;resource: A100(1/4)&lt;/p&gt;
+
+&lt;p&gt;【基础作业】使用 InternLM-Chat-7B 模型生成 300 字的小故事（需截图）。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/L9E2m4Q4ucFAS6OjYgz8EBYXW4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;【基础作业】熟悉 hugging face 下载功能，使用 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;huggingface_hub&lt;/code&gt; python 包，下载 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;InternLM-20B&lt;/code&gt; 的 config.json 文件到本地（需截图下载过程）。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/yZP0QxFeZkVvF54xqEyslfKrdlI.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;demo2---lagent-智能体工具调用&quot;&gt;Demo2 - Lagent 智能体工具调用&lt;/h2&gt;
+
+&lt;p&gt;InternLM-Chat-7B + InternStudio&lt;/p&gt;
+
+&lt;p&gt;info: Ubuntu 20.04, CUDA 11.7, CuDNN8.5-NCCL2.12, conda&lt;/p&gt;
+
+&lt;p&gt;resource: A100(1/4)&lt;/p&gt;
+
+&lt;p&gt;询问这个问题，大模型无法正确处理2月29日这个信息。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/MoOUjgSGO6PRkjWRPI0ZLoO70cI.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;demo3---浦语灵笔图文理解创作&quot;&gt;Demo3 - 浦语·灵笔图文理解创作&lt;/h2&gt;
+
+&lt;p&gt;InternLM-xcomposer-7B + InternStudio&lt;/p&gt;
+
+&lt;p&gt;info: Ubuntu 20.04, CUDA 11.7, CuDNN8.5-NCCL2.12, conda&lt;/p&gt;
+
+&lt;p&gt;resource: A100(2/4)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/mvDULTflq02f7qtqtYiM53QQZI.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;对于图片中文字的识别似乎还有问题，里面包含书籍和演讲者照片应该是从“读书·演讲”的文字发散开来的，还有二维码大概是从“海报”这个结论发散出来的。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://framerusercontent.com/images/zoAGSby0EYQCRS2N5SRMYnLxqdY.png&quot; alt=&quot;&quot; /&gt;&lt;img src=&quot;https://framerusercontent.com/images/Nk2CpHcWFfEKhMLXabaZ3enaXOE.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;环境配置&quot;&gt;环境配置&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;端口转发 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh -CNg -L 6006:127.0.0.1:6006 root@ssh.intern-ai.org.cn -p 33656&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;-C enables compression of data during transmission&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;-N tells SSH that no command will be sent once the tunnel is up&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;-g allows remote hosts to connect to forwarded ports.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;-L 6006:127.0.0.1:6006: This is the local port forwarding option. It specifies that connections to port 6006 on your local machine should be forwarded to port 6006 on the remote server.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;root@ssh.intern-ai.org.cn: the remote server connect to.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;-p specifies the port number that SSH should use to connect to the remote server.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Hugging Face镜像源 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export HF_ENDPOINT=https://hf-mirror.com&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Hannah</name></author><category term="blog" /><category term="InterLM" /><category term="llm" /><summary type="html"></summary></entry></feed>
