@@ -31,7 +31,7 @@ GSM8K is a dataset of 8.5K high quality linguistically diverse grade school math
 ### 高质量语料
 - 书生·万卷1.0: 符合主流中国价值观的中文语料
     - 精细化处理：万卷经过语言筛选、文本提取、格式标准化、数据据过滤和清洗（基于规则和模型）、多尺度去重和数据质量评估等精细数据处理环节，能够很好地适应后续模型训练的要求。
-- 书生·万卷CC：安全、信息蜜度更高的英文语料
+- 书生·万卷CC：安全、信息密度更高的英文语料
 ![image-3.png](https://s2.loli.net/2024/04/01/V756qB2J8crSpEH.png)
 
 
