@@ -4,6 +4,7 @@ description: "New Ideas Meet Talents."
 url: https://hannah803.github.io
 paginate: 5
 permalink: pretty
+markdown:  kramdown
 
 # About/contact
 author:
