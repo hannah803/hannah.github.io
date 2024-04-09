@@ -344,7 +344,7 @@ a.sidebar-nav-item:focus {
   font-size: 1rem;
 }
 .related-posts li small {
-  font-size: 1rem;
+  font-size: 75%;
   color: #999;
 }
 .related-posts li a:hover {

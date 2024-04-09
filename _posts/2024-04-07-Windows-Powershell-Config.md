@@ -19,7 +19,7 @@ oh-my-posh font install
 在Powershell设置中，默认值-外观-字体，选择`CaskaydiaMono Nerd Font Mono`
 
 ## 自动补全 - PSReadLine
-### ## Powershell 7.4
+### Powershell 7.4
 ```
 winget install Microsoft.PowerShell -s winget
 ```
