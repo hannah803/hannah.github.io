@@ -341,9 +341,10 @@ a.sidebar-nav-item:focus {
 }
 .related-posts h3 {
   margin-top: 0;
+  font-size: 12px;
 }
 .related-posts li small {
-  font-size: 50%;
+  font-size: 75%;
   color: #999;
 }
 .related-posts li a:hover {
