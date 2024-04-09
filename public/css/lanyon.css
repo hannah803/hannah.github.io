@@ -41,14 +41,14 @@ body {
 }
 
 html {
-  /*font-family: "PT Serif", Georgia, "Times New Roman", serif;*/
-  font-family:Helvetica,Arial,"Hiragino Sans GB","Microsoft Yahei","微软雅黑","华文细黑",sans-serif;
+  font-family: "PT Serif", Georgia, "Times New Roman", serif,"Microsoft Yahei","微软雅黑";
+  /*font-family:Helvetica,Arial,"Hiragino Sans GB","Microsoft Yahei","微软雅黑","华文细黑",sans-serif;*/
   font-size: 16px;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  /*font-family: "PT Sans", Helvetica, Arial, sans-serif;*/
-  font-family:Helvetica,Arial,"Hiragino Sans GB","Microsoft Yahei","微软雅黑","华文细黑",sans-serif;
+  font-family: "PT Sans", Helvetica, Arial, sans-serif, "华文细黑";
+  /*font-family:Helvetica,Arial,"Hiragino Sans GB","Microsoft Yahei","微软雅黑","华文细黑",sans-serif;*/
   font-weight: 400;
   color: #313131;
   letter-spacing: -.025rem;
