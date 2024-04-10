@@ -66,3 +66,42 @@ ssh -CNg -L 6007:127.0.0.1:6006 root@ssh.intern-ai.org.cn -p 41863
 ![image.png](https://s2.loli.net/2024/04/10/6eO9tTrEWCgLjiX.png)
 
 ## 运行Lagent应用
+Lagent是一个智能体框架，提供了一些典型工具为LLM赋能。特性有
+- 流式输出：提供 stream_chat 接口，本地就可演示流式demo
+- 接口统一：model、action、agent
+
+![](https://github.com/InternLM/Tutorial/raw/camp2/helloworld/images/Lagent-1.png)
+
+### 安装Lagent框架
+```
+git clone https://gitee.com/internlm/lagent.git
+cd /root/demo/lagent
+git checkout 581d9fb8987a5d9b72bb9ebd37a95efd47d479ac
+pip install -e . 
+```
+运行lagent demo
+```
+
+```
+
+## 运行浦语灵笔2.0
+```bash
+python /root/demo/InternLM-XComposer/examples/gradio_demo_composition.py  \
+--code_path /root/models/internlm-xcomposer2-7b \
+--private \
+--num_gpus 1 \
+--port 6006
+```
+
+![](https://github.com/InternLM/Tutorial/blob/camp2/helloworld/images/img-9.png)
+
+```bash
+python /root/demo/InternLM-XComposer/examples/gradio_demo_chat.py  \
+--code_path /root/models/internlm-xcomposer2-vl-7b \
+--private \
+--num_gpus 1 \
+--port 6006
+```
+
+![](https://github.com/InternLM/Tutorial/raw/camp2/helloworld/images/img-7.png)
+
