@@ -47,11 +47,11 @@ VD向量数据库
 
 ![image.png](https://s2.loli.net/2024/04/10/5sKriGtBbhAcm18.png)
 
-## RAG vs Fine-tuning
+### RAG vs Fine-tuning
 
 ![image.png](https://s2.loli.net/2024/04/10/xiEM4ju5bK3JF9R.png)
 
-## RAG评价框架和基准测试
+### RAG评价框架和基准测试
 - 经典评估指标（NLP）：
     - 准确率 (Accuracy)
     - 召回率 (Recall)
@@ -74,4 +74,14 @@ VD向量数据库
 
 ![image.png](https://s2.loli.net/2024/04/10/WUiozf2vLjg5Em7.png)
 
+## 茴香豆
+- 支持模型：书生、通义千问、Kimi、ChatGPT、ChatGLM、DeepSeek等
+![image.png](https://s2.loli.net/2024/04/10/h2tauIzMUv5rXZg.png)
 
+- 拒答判断
+![image.png](https://s2.loli.net/2024/04/10/lzUBDEm2LskRqo8.png)
+
+- 应答工作流
+![image.png](https://s2.loli.net/2024/04/10/JQMOfj1WtP2VvNn.png)
+
+### 茴香豆Web端
