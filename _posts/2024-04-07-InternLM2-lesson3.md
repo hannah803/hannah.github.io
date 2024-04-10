@@ -84,4 +84,14 @@ VD向量数据库
 - 应答工作流
 ![image.png](https://s2.loli.net/2024/04/10/JQMOfj1WtP2VvNn.png)
 
-### 茴香豆Web端
+### 部署茴香豆Web端
+Web端用于创建知识库，获取web端地址，设置正反例
+
+```
+git clone https://github.com/internlm/huixiangdou && cd huixiangdou
+git checkout 447c6f7e68a1657fce1c4f7c740ea1700bde0440
+
+sed -i '6s#.*#embedding_model_path = "/root/models/bce-embedding-base_v1"#' /root/huixiangdou/config.ini
+sed -i '7s#.*#reranker_model_path = "/root/models/bce-reranker-base_v1"#' /root/huixiangdou/config.ini
+sed -i '29s#.*#local_llm_path = "/root/models/internlm2-chat-7b"#' /root/huixiangdou/config.ini
+```
