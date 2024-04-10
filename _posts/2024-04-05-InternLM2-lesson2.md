@@ -81,8 +81,10 @@ pip install -e .
 ```
 运行lagent demo
 ```
-
+streamlit run /root/demo/lagent/examples/internlm2_agent_web_demo_hf.py --server.address 127.0.0.1 --server.port 6006
 ```
+
+![image.png](https://s2.loli.net/2024/04/10/Eya5glIWQKmxF4A.png)
 
 ## 运行浦语灵笔2.0
 ```bash
@@ -105,3 +107,9 @@ python /root/demo/InternLM-XComposer/examples/gradio_demo_chat.py  \
 
 ![](https://github.com/InternLM/Tutorial/raw/camp2/helloworld/images/img-7.png)
 
+## 从huggingface下载文件
+```
+huggingface-cli  download --resume-download internlm/internlm2-chat-7b config.json
+```
+
+![image.png](https://s2.loli.net/2024/04/10/riYIRL54flsNuZ2.png)
