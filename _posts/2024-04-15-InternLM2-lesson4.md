@@ -45,5 +45,16 @@ Flash Attention 和 DeepSpeed ZeRO 是 XTuner 最重要的两个优化技巧
 Finetune前
 ![image.png](https://s2.loli.net/2024/04/16/Xq83eLKimSV2npJ.png)
 
+```
+xtuner copy-cfg \
+  llava_internlm2_chat_1_8b_qlora_clip_vit_large_p14_336_lora_e1_gpu8_finetune \
+  /root/tutorial/xtuner/llava
+# visual encoder是openai的clip-vit-large-patch14-336
+# 训练数据来自GPT生成的图片问答对
+
+xtuner train /root/tutorial/xtuner/llava/llava_internlm2_chat_1_8b_qlora_clip_vit_large_p14_336_lora_e1_gpu8_finetune_copy.py --deepspeed deepspeed_zero2
+
+```
+
 Finetune后
 ![image.png](https://s2.loli.net/2024/04/16/Y82RXzUmoWd7lKh.png)
