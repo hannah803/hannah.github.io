@@ -1,6 +1,6 @@
 ---
 layout: post
-title: InternLM2 Lesson 4 - XTuner微调LLM: 1.8B 多模态 Agent
+title: InternLM2 Lesson 4 - XTuner微调LLM 1.8B 多模态
 ---
 
 讲师：李剑锋 汪周谦 王群|XTuner社区贡献者
