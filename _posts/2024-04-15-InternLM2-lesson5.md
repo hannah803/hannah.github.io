@@ -107,3 +107,194 @@ KV Cache是一种缓存技术，通过存储键值对的形式来复用计算结
 ![image.png](https://s2.loli.net/2024/04/17/6XqIo2nBOVayLJN.png)
 
 `lmdeploy chat /root/internlm2-chat-1_8b --cache-max-entry-count 0.5`时
+![image.png](https://s2.loli.net/2024/04/17/Gvo4h7iqzmc8Jyu.png)
+
+`lmdeploy chat /root/internlm2-chat-1_8b --cache-max-entry-count 0.01`时
+![image.png](https://s2.loli.net/2024/04/17/XmVJArtLjyxz5fQ.png)
+
+### W4A16量化
+LMDeploy使用AWQ算法，实现模型4bit权重量化。推理引擎TurboMind提供了非常高效的4bit推理cuda kernel，性能是FP16的2.4倍以上。
+
+```bash
+lmdeploy lite auto_awq \
+   /root/internlm2-chat-1_8b \
+  --calib-dataset 'ptb' \
+  --calib-samples 128 \
+  --calib-seqlen 1024 \
+  --w-bits 4 \
+  --w-group-size 128 \
+  --work-dir /root/internlm2-chat-1_8b-4bit
+```
+
+运行量化模型`lmdeploy chat /root/internlm2-chat-1_8b-4bit --model-format awq`
+![image.png](https://s2.loli.net/2024/04/17/72lneMDsVg3JWbz.png)
+
+调整KV cache`lmdeploy chat /root/internlm2-chat-1_8b-4bit --model-format awq --cache-max-entry-count 0.01`时
+![image.png](https://s2.loli.net/2024/04/17/CqJ4doTsFHyP7Yc.png)
+
+### LMDeploy Serve
+![](https://github.com/InternLM/Tutorial/blob/camp2/lmdeploy/imgs/4_1.jpg)
+#### API服务器
+```bash
+lmdeploy serve api_server \
+    /root/internlm2-chat-1_8b \
+    --model-format hf \
+    --quant-policy 0 \
+    --server-name 0.0.0.0 \
+    --server-port 23333 \
+    --tp 1
+ssh -C -N -g -L 6007:127.0.0.1:23333 root@ssh.intern-ai.org.cn -p 41863
+```
+![image.png](https://s2.loli.net/2024/04/17/CNBQLOGejZkKdR2.png)
+
+##### 命令行API客户端连接API服务器
+```bash
+lmdeploy serve api_client http://localhost:23333
+```
+![image.png](https://s2.loli.net/2024/04/17/R4zMDCPonTtqOjH.png)
+
+##### 网页客户端连接API服务器
+使用Gradio作为前端，启动网页客户端。
+```bash
+lmdeploy serve gradio http://localhost:23333 \
+    --server-name 0.0.0.0 \
+    --server-port 6006
+```
+![image.png](https://s2.loli.net/2024/04/17/4DOTPSX6f578tqy.png)
+
+#### Python代码集成
+##### 运行模型
+```python
+from lmdeploy import pipeline
+
+pipe = pipeline('/root/internlm2-chat-1_8b')
+response = pipe(['Hi, pls intro yourself', '上海是'])
+print(response)
+```
+
+##### 向TurboMind后端传递参数
+通过创建`TurbomindEngineConfig`，向lmdeploy传递参数。
+
+```python
+from lmdeploy import pipeline, TurbomindEngineConfig
+
+# 调低 k/v cache内存占比调整为总显存的 20%
+backend_config = TurbomindEngineConfig(cache_max_entry_count=0.2)
+
+pipe = pipeline('/root/internlm2-chat-1_8b',
+                backend_config=backend_config)
+response = pipe(['Hi, pls intro yourself', '上海是'])
+print(response)
+```
+
+##### 运行结果对比
+![image.png](https://s2.loli.net/2024/04/17/W2tFTEyikVGIp48.png)
+
+
+## 使用LMDeploy运行视觉多模态大模型llava
+安装llava依赖库
+`pip install git+https://github.com/haotian-liu/LLaVA.git@4e2277a060da264c4f21b364c867cc622c945874`
+
+```python
+from lmdeploy.vl import load_image
+from lmdeploy import pipeline, TurbomindEngineConfig
+
+
+backend_config = TurbomindEngineConfig(session_len=8192) # 图片分辨率较高时请调高session_len
+# pipe = pipeline('liuhaotian/llava-v1.6-vicuna-7b', backend_config=backend_config) 非开发机运行此命令
+pipe = pipeline('/share/new_models/liuhaotian/llava-v1.6-vicuna-7b', backend_config=backend_config)
+
+image = load_image('https://raw.githubusercontent.com/open-mmlab/mmdeploy/main/tests/data/tiger.jpeg')
+response = pipe(('describe this image', image))
+print(response)
+```
+![image.png](https://s2.loli.net/2024/04/17/4jabmLUiD2f3rNu.png)
+
+### 通过gradio运行llava模型
+```python
+import gradio as gr
+from lmdeploy import pipeline, TurbomindEngineConfig
+
+
+backend_config = TurbomindEngineConfig(session_len=8192) # 图片分辨率较高时请调高session_len
+# pipe = pipeline('liuhaotian/llava-v1.6-vicuna-7b', backend_config=backend_config) 非开发机运行此命令
+pipe = pipeline('/share/new_models/liuhaotian/llava-v1.6-vicuna-7b', backend_config=backend_config)
+
+def model(image, text):
+    if image is None:
+        return [(text, "请上传一张图片。")]
+    else:
+        response = pipe((text, image)).text
+        return [(text, response)]
+
+demo = gr.Interface(fn=model, inputs=[gr.Image(type="pil"), gr.Textbox()], outputs=gr.Chatbot())
+demo.launch()   
+```
+
+![image.png](https://s2.loli.net/2024/04/17/ZhOCK2j4NdkYWST.png)
+
+### 定量比较LMDeploy与Transformer库的推理速度差异
+速度测试脚本，word和token在数量上可以近似认为成线性关系。
+
+```python
+import torch
+import datetime
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained("/root/internlm2-chat-1_8b", trust_remote_code=True)
+
+# Set `torch_dtype=torch.float16` to load model in float16, otherwise it will be loaded as float32 and cause OOM Error.
+model = AutoModelForCausalLM.from_pretrained("/root/internlm2-chat-1_8b", torch_dtype=torch.float16, trust_remote_code=True).cuda()
+model = model.eval()
+
+# warmup
+inp = "hello"
+for i in range(5):
+    print("Warm up...[{}/5]".format(i+1))
+    response, history = model.chat(tokenizer, inp, history=[])
+
+# test speed
+inp = "请介绍一下你自己。"
+times = 10
+total_words = 0
+start_time = datetime.datetime.now()
+for i in range(times):
+    response, history = model.chat(tokenizer, inp, history=history)
+    total_words += len(response)
+end_time = datetime.datetime.now()
+
+delta_time = end_time - start_time
+delta_time = delta_time.seconds + delta_time.microseconds / 1000000.0
+speed = total_words / delta_time
+print("Speed: {:.3f} words/s".format(speed))
+```
+
+```python
+import datetime
+from lmdeploy import pipeline
+
+pipe = pipeline('/root/internlm2-chat-1_8b')
+
+# warmup
+inp = "hello"
+for i in range(5):
+    print("Warm up...[{}/5]".format(i+1))
+    response = pipe([inp])
+
+# test speed
+inp = "请介绍一下你自己。"
+times = 10
+total_words = 0
+start_time = datetime.datetime.now()
+for i in range(times):
+    response = pipe([inp])
+    total_words += len(response[0].text)
+end_time = datetime.datetime.now()
+
+delta_time = end_time - start_time
+delta_time = delta_time.seconds + delta_time.microseconds / 1000000.0
+speed = total_words / delta_time
+print("Speed: {:.3f} words/s".format(speed))
+```
+可以看到速度提升非常大
+![image.png](https://s2.loli.net/2024/04/17/G4WDmFH5KY3bNuM.png)
