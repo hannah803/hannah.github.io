@@ -61,4 +61,49 @@ title: InternLM2 Lesson 5 - LMDeploy 量化部署 LLM 实践
     ![image.png](https://s2.loli.net/2024/04/16/MbxlfJhkrY7PTtu.png)
 
 ## 实践
+### Transformer库运行模型
 Transformer库是Huggingface社区推出的用于运行HF模型的官方库。
+```python
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained("/root/internlm2-chat-1_8b", trust_remote_code=True)
+
+# Set `torch_dtype=torch.float16` to load model in float16, otherwise it will be loaded as float32 and cause OOM Error.
+model = AutoModelForCausalLM.from_pretrained("/root/internlm2-chat-1_8b", torch_dtype=torch.float16, trust_remote_code=True).cuda()
+model = model.eval()
+
+inp = "hello"
+print("[INPUT]", inp)
+response, history = model.chat(tokenizer, inp, history=[])
+print("[OUTPUT]", response)
+
+inp = "please provide three suggestions about time management"
+print("[INPUT]", inp)
+response, history = model.chat(tokenizer, inp, history=history)
+print("[OUTPUT]", response)
+```
+
+![image.png](https://s2.loli.net/2024/04/17/W4JNCSwc7FthkfO.png)
+
+### LMDeploy部署模型
+`lmdeploy chat /root/internlm2-chat-1_8b`
+
+![image.png](https://s2.loli.net/2024/04/17/JyPbIQ7uASUrK3n.png)
+
+## LMDeploy量化
+常见的 LLM 模型由于 Decoder Only 架构的特性，实际推理时大多数的时间都消耗在了逐 Token 生成阶段（Decoding 阶段），是典型的访存密集型场景。
+
+KV8量化是指将逐 Token（Decoding）生成过程中的上下文 K 和 V 中间结果进行 INT8 量化（计算时再反量化），以降低生成过程中的显存占用。
+
+W4A16 量化，将 FP16 的模型权重量化为 INT4，Kernel 计算时，访存量直接降为 FP16 模型的 1/4，大幅降低了访存成本。Weight Only 是指仅量化权重，数值计算依然采用 FP16（需要将 INT4 权重反量化）。
+
+### KV Cache
+KV Cache是一种缓存技术，通过存储键值对的形式来复用计算结果，以达到提高性能和降低内存消耗的目的。在大规模训练和推理中，KV Cache可以显著减少重复计算量，从而提升模型的推理速度。理想情况下，KV Cache全部存储于显存，以加快访存速度。当显存空间不足时，也可以将KV Cache放在内存，通过缓存管理器控制将当前需要使用的数据放入显存。
+
+模型在运行时，占用的显存可大致分为三部分：模型参数本身占用的显存、KV Cache占用的显存，以及中间运算结果占用的显存。LMDeploy的KV Cache管理器可以通过设置`--cache-max-entry-count`参数，控制KV缓存占用剩余显存的最大比例。默认的比例为0.8。
+
+默认情况下
+![image.png](https://s2.loli.net/2024/04/17/6XqIo2nBOVayLJN.png)
+
+`lmdeploy chat /root/internlm2-chat-1_8b --cache-max-entry-count 0.5`时
