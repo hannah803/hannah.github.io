@@ -1,6 +1,6 @@
 ---
 layout: post
-title: LLM Arena - 中文理解
+title: LLM Arena - 从大暴雨叔叔看当前大模型中文能力
 ---
 
 
