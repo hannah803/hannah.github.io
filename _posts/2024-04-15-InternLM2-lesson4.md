@@ -45,7 +45,7 @@ Flash Attention 和 DeepSpeed ZeRO 是 XTuner 最重要的两个优化技巧
 Finetune前
 ![image.png](https://s2.loli.net/2024/04/16/Xq83eLKimSV2npJ.png)
 
-```
+```bash
 xtuner copy-cfg \
   llava_internlm2_chat_1_8b_qlora_clip_vit_large_p14_336_lora_e1_gpu8_finetune \
   /root/tutorial/xtuner/llava

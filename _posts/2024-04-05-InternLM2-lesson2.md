@@ -73,14 +73,14 @@ Lagent是一个智能体框架，提供了一些典型工具为LLM赋能。特�
 ![](https://github.com/InternLM/Tutorial/raw/camp2/helloworld/images/Lagent-1.png)
 
 ### 安装Lagent框架
-```
+```bash
 git clone https://gitee.com/internlm/lagent.git
 cd /root/demo/lagent
 git checkout 581d9fb8987a5d9b72bb9ebd37a95efd47d479ac
 pip install -e . 
 ```
 运行lagent demo
-```
+```bash
 streamlit run /root/demo/lagent/examples/internlm2_agent_web_demo_hf.py --server.address 127.0.0.1 --server.port 6006
 ```
 

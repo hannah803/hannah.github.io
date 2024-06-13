@@ -90,7 +90,7 @@ Web端用于创建知识库，获取web端地址，设置正反例
 - 准备模型库，用于向量数据库和词嵌入的模型`bce-embedding-base_v1`, 用于检索的重排序模型`bce-reranker-base_v1`【网易BCE双语模型】, `internlm2-chat-7b`
 - 下载茴香豆，修改配置文件
 
-```
+```bash
 git clone https://github.com/internlm/huixiangdou && cd huixiangdou
 git checkout 447c6f7e68a1657fce1c4f7c740ea1700bde0440
 
@@ -101,7 +101,7 @@ sed -i '29s#.*#local_llm_path = "/root/models/internlm2-chat-7b"#' /root/huixian
 
 - 运行茴香豆
 
-```
+```bash
 sed -i '74s/.*/    queries = ["huixiangdou 是什么？", "茴香豆怎么部署到微信群", "今天天气怎么样？"]/' /root/huixiangdou/huixiangdou/main.py
 python3 -m huixiangdou.main --standalone
 ```
